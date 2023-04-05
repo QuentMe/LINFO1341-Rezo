@@ -7,9 +7,16 @@ import matplotlib.pyplot as plt
 bin_size = .1 # in s
 
 for file in os.listdir("WireShark_Records/"):
+    if os.path.exists("Graphs/" + file[0:-7] + ".png"):
+        print("skipping file: " + file + " (already graphed)")
+        continue
+
     capture = pyshark.FileCapture("WireShark_Records/" + file, display_filter="(udp || tcp) && !(ip.src == 192.168.1.38) && !(eth.src == 8c:dc:d4:38:2a:a2) && !(ip.src == 192.168.1.29) && !(ipv6.src == fe80::ba27:ebff:fe6b:b6aa) && !(ip.dst == 239.255.255.250) && !(ipv6.src == fe80::aa6a:bbff:fe81:1883) ")
     capture.load_packets()
     print("")
+
+    # check if file is in ./Graphs
+
 
     if (capture.__len__() > 0):
         time_start = float(capture[0].sniff_timestamp)
@@ -23,6 +30,7 @@ for file in os.listdir("WireShark_Records/"):
         dns_times = []
         mdns_times = []
         tls_times = []
+        quic_times = []
         for packet in capture:
             if packet.transport_layer == "UDP":
                 udp_times.append(float(packet.sniff_timestamp) - time_start)
@@ -34,6 +42,8 @@ for file in os.listdir("WireShark_Records/"):
                 mdns_times.append(float(packet.sniff_timestamp) - time_start)
             elif packet.transport_layer == "TLS":
                 tls_times.append(float(packet.sniff_timestamp) - time_start)
+            elif packet.transport_layer == "QUIC":
+                quic_times.append(float(packet.sniff_timestamp) - time_start)
                 
         
 
@@ -51,6 +61,9 @@ for file in os.listdir("WireShark_Records/"):
 
         # graph tls packets per second
         plt.hist(tls_times, bins=nBins, label="TLS Packets", alpha=1)
+
+        # graph quic packets per second
+        plt.hist(quic_times, bins=nBins, label="QUIC Packets", alpha=1)
 
 
 
