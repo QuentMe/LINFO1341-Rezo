@@ -13,28 +13,32 @@ bin_size = .1 # in ms
 
 capture = pyshark.FileCapture("WireShark_Records/" + file, display_filter="(udp || tcp) && !(ip.src == 192.168.1.38) && !(eth.src == 8c:dc:d4:38:2a:a2) && !(ip.src == 192.168.1.29) && !(ipv6.src == fe80::ba27:ebff:fe6b:b6aa) && !(ip.dst == 239.255.255.250) && !(ipv6.src == fe80::aa6a:bbff:fe81:1883) ")
 capture.load_packets()
-print("File: " + str(file) + " has " + str(len(capture)) + " packets")
+print("")
+
+time_start = float(capture[0].sniff_timestamp)
+time_end = float(capture[capture.__len__() - 1].sniff_timestamp)
+nBins = floor((time_end-time_start)/bin_size)
+print("Analysing file: " + str(file) + "\n" + str(len(capture)) + " unfilteredd packets and " + str(nBins) + " bins with a filterd duration of: " + str(time_end-time_start)[0:5]+ "s")
+print("")
+
 udp_times = []
 tcp_times = []
 dns_times = []
 mdns_times = []
 tls_times = []
-if (capture.__len__() > 0):
-    time_start = float(capture[0].sniff_timestamp)
-    time_end = float(capture[capture.__len__() - 1].sniff_timestamp)
-    for packet in capture:
-        if packet.transport_layer == "UDP":
-            udp_times.append(float(packet.sniff_timestamp) - time_start)
-        elif packet.transport_layer == "TCP":
-            tcp_times.append(float(packet.sniff_timestamp) - time_start)
-        elif packet.transport_layer == "DNS":
-            dns_times.append(float(packet.sniff_timestamp) - time_start)
-        elif packet.transport_layer == "MDNS":
-            mdns_times.append(float(packet.sniff_timestamp) - time_start)
-        elif packet.transport_layer == "TLS":
-            tls_times.append(float(packet.sniff_timestamp) - time_start)
-            
-nBins = floor((time_end-time_start)/bin_size)
+for packet in capture:
+    if packet.transport_layer == "UDP":
+        udp_times.append(float(packet.sniff_timestamp) - time_start)
+    elif packet.transport_layer == "TCP":
+        tcp_times.append(float(packet.sniff_timestamp) - time_start)
+    elif packet.transport_layer == "DNS":
+        dns_times.append(float(packet.sniff_timestamp) - time_start)
+    elif packet.transport_layer == "MDNS":
+        mdns_times.append(float(packet.sniff_timestamp) - time_start)
+    elif packet.transport_layer == "TLS":
+        tls_times.append(float(packet.sniff_timestamp) - time_start)
+        
+
 
 # graph dns packets per second
 plt.hist(dns_times, bins=nBins, label="DNS Packets", alpha=1)
@@ -58,6 +62,3 @@ plt.ylabel('Number of Packets')
 plt.title(file + "\nbin size: " + str(bin_size) + "s")
 
 plt.legend(loc='upper right')
-plt.show()
-
-    
