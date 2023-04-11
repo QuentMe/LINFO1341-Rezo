@@ -1,5 +1,7 @@
 .DS_Store
-Graphs/
 
 
 WireShark_Records/bandwith/result.pdf
+Graphs/zz_Pre_refilter/**.png
+Graphs/zz_preICMP/**.png
+Graphs/zz_preSTUN/**.png
