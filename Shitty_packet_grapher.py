@@ -13,7 +13,7 @@ for i in range(len(layers)):
 print(header)
 
 for file in os.listdir("WireShark_Records/"):
-    if file[0] == "." or file == "Hidden":
+    if file[0] == "." or file == "Hidden" or file == "bandwith":
         continue
     if os.path.isfile("Graphs/" + file[0:-7] + ".png"):
         print("skipping : " + file[0:-7])
