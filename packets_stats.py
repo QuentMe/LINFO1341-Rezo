@@ -37,7 +37,6 @@ for packet in capture:
         mdns_times.append(float(packet.sniff_timestamp) - time_start)
     elif packet.transport_layer == "TLS":
         tls_times.append(float(packet.sniff_timestamp) - time_start)
-        
 
 
 # graph dns packets per second

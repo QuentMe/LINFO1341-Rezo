@@ -25,4 +25,4 @@ for file in os.listdir("WireShark_Records/"):
                     n_quic += 1
                     break
 
-        print(f"{str(file)[0:-7][0:35]:<35}" + ": " + f"{str(n_quic):>5}" + " quic out of "+ f"{str(len(capture)):>5}" + " unfiltered in " + str(time_end-time_start)[0:5] + " s")
+        print(f"{str(file)[0:-7][0:45]:<45}" + ": " + f"{str(n_quic):>4}" + " quic out of "+ f"{str(len(capture)):>5}" + " unfiltered in " + str(time_end-time_start)[0:5] + " s")
